@@ -14,6 +14,11 @@ message("CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}\n")
 
 set(CMAKE_CXX_STANDARD 20)
 
+option(SCENARIO_STATIC_GCC_RUNTIME
+  "Statically link libstdc++ and libgcc where supported"
+  ON
+)
+
 # Optimize Release builds
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")

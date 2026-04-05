@@ -17,6 +17,10 @@ target_include_directories(scenario
 
 target_link_options(scenario PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_LIST_DIR}/version.map")
 
+if(SCENARIO_STATIC_GCC_RUNTIME AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  target_link_options(scenario PRIVATE -static-libstdc++ -static-libgcc)
+endif()
+
 set_target_properties(scenario PROPERTIES
   PREFIX    ""         # removes "lib" prefix
   #VERSION   1.0.0
@@ -53,4 +57,3 @@ add_custom_command(TARGET scenario POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:scenario> "${PY_BINARY_FOLDER}/$<TARGET_FILE_NAME:scenario>"
   COMMENT "Copying scenario library to ${PY_BINARY_FOLDER}"
 )
-

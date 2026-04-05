@@ -25,6 +25,10 @@ target_link_libraries(scenario_tests PRIVATE
     GTest::gmock_main
 )
 
+if(SCENARIO_STATIC_GCC_RUNTIME AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  target_link_options(scenario_tests PRIVATE -static-libstdc++ -static-libgcc)
+endif()
+
 
 # add_test(NAME scenario_tests COMMAND scenario_tests)
 add_test(AllTestsInMain scenario_tests)
