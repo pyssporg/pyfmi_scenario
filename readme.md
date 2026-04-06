@@ -105,6 +105,27 @@ rm -rf build
 cmake --build build -j
 ```
 
+## Repeatable Build Container
+
+The repository includes a Docker image definition for a pinned Ubuntu 22.04 build
+environment with GCC 13 and a bootstrapped `vcpkg` checkout at the baseline from
+[`vcpkg-configuration.json`](./vcpkg-configuration.json).
+
+Build the image:
+```bash
+./scripts/build_container.sh
+```
+
+Build the project inside the container:
+```bash
+./scripts/container_build.sh
+```
+
+Notes:
+- The repo is bind-mounted into `/work`, so container builds write into the normal `build/` directory.
+- Override the image tag with `SCENARIO_FMU_IMAGE=...`.
+- Override the CMake build type with `BUILD_TYPE=Debug` or `BUILD_TYPE=Release`.
+
 ## Tests
 
 Build and run tests
@@ -145,5 +166,4 @@ build and package before executing
 - Outputs:
   - CSV: `reference_results/results.csv` 
   - Plot: `reference_results/results.png`
-
 
