@@ -1,55 +1,96 @@
 # scenario-fmu-generator
 
-Utilities to package and run Scenario FMUs (FMI 2.0 Co-Simulation).
+Python tooling for packaging and running the Scenario FMU.
 
-- `scenario-fmu-package`: Create a valid `.fmu` archive from the built shared library.
+This package is the user-facing layer on top of the C++ FMU implementation in
+the repository root. It provides a small Python API plus CLIs to:
 
-Use case:
-- build scenario fmu with custom connectors for a specific model or use a generic model with generic connections y1, y2,...
-- attach it to an ssp
-- create parameter sets to capture alterations in the scenario
+- package the built shared library into an `.fmu`
+- generate an `.ssv` parameter set for `scenario_input`
+- run the FMU locally with FMPy
+
+For the main project overview and build instructions, start at the repository
+root `README.md`.
 
 ## Install
 
-```
+Published package:
+
+```bash
 pip install scenario-fmu-generator
 ```
 
-## CLI
+Local development install:
 
-### package FMU
-
-This generates `modelDescription.xml`, detect platform (`binaries/linux64`, `darwin64`,
-`win32`/`win64`) and copy the built shared library (`libscenario.so`/`libscenario.dylib`/
-`scenario.dll`).
-
-```
-# Default generic fmu
-scenario-fmu-package --out scenario.fmu
-
-# Custom fmu with default behavior
-scenario-fmu-package --out ./build/scenario.fmu -s "var1; L; 1,0; 3,0.5; 5,4; 9,2
-var2; ZOH; 2,0; 3,0.5; 5,4; 9,2
-var3; NN; 0,0; 1,0.5; 2,4; 3,2"
+```bash
+python -m pip install -e ./python
 ```
 
-### Build the ssv
+## Recommended Usage
 
-Create an SSP parameter set to be used with the scenario fmu:
+The Python API is the intended start point.
 
+Create an FMU:
+
+```python
+from scenario_fmu_generator import ScenarioFmuPackager
+
+packager = ScenarioFmuPackager("scenario", "scenario", None)
+packager.add_raw("var1;L;1,0;3,0.5;5,4;9,2")
+packager.build("build/scenario.fmu")
 ```
-scenario-fmu-ssv --out ./build/scenario.ssv -s "var1; L; 1,2; 3,0.5; 4,3; 7,2
-var2; ZOH; 2,2; 3,0.5; 5,5; 9,2
-var3; NN; 0,0; 1,0.5; 2,4; 3,2"
+
+Generate an SSP parameter set:
+
+```python
+from scenario_fmu_generator import ParameterSetBuilder
+
+builder = ParameterSetBuilder(name="Default")
+builder.add_string("scenario_input", "var1;L;1,0;3,0.5;5,4;9,2")
+builder.build("build/scenario.ssv")
 ```
 
-## Python Tools (Packaging & CLI)
+## Commands
 
-To build distributable (wheel/sdist) for publishing:
+### Package An FMU
 
+```bash
+scenario-fmu-package --out build/scenario.fmu
 ```
+
+With scenario data:
+
+```bash
+scenario-fmu-package --out build/scenario.fmu --scenario-data "var1;L;1,0;3,0.5;5,4;9,2
+var2;ZOH;2,0;3,0.5;5,4;9,2
+var3;NN;0,0;1,0.5;2,4;3,2"
+```
+
+### Generate An SSV Parameter Set
+
+```bash
+scenario-fmu-ssv --out build/scenario.ssv --scenario-data "var1;L;1,2;3,0.5;4,3;7,2
+var2;ZOH;2,2;3,0.5;5,5;9,2
+var3;NN;0,0;1,0.5;2,4;3,2"
+```
+
+### Run An FMU
+
+```bash
+scenario-fmu-run --fmu build/scenario.fmu --stop 10 --step 0.1
+```
+
+## Build Python Distributions
+
+```bash
 cd python
 python -m build
 ```
 
-By default, CMake copies the built shared library into the Python package ensuring its available for the build.
+## Notes
+
+- The CMake build copies the compiled shared library into
+  `src/scenario_fmu_generator/_binaries/<platform>/`.
+- `scenario-fmu-package` depends on that copied binary being present.
+- For the full CLI and scenario format reference, see `../docs/python-tools.md`
+  and `../docs/scenario-format.md`.
