@@ -12,8 +12,13 @@ if [[ -z "${baseline}" ]]; then
     exit 1
 fi
 
-docker build \
+if ! command -v podman >/dev/null 2>&1; then
+    echo "Container CLI not found: podman" >&2
+    exit 1
+fi
+
+podman build \
     --build-arg "VCPKG_COMMIT=${baseline}" \
-    -f "${repo_root}/docker/ubuntu22-gcc13/Dockerfile" \
+    -f "${repo_root}/containers/ubuntu22-gcc13/Containerfile" \
     -t "${image_name}" \
     "${repo_root}"

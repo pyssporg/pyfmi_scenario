@@ -102,12 +102,12 @@ rm -rf build
 ## Build library
 
 ```
-cmake --build build -j
+cmake --build build
 ```
 
 ## Repeatable Build Container
 
-The repository includes a Docker image definition for a pinned Ubuntu 22.04 build
+The repository includes a Podman image definition for a pinned Ubuntu 22.04 build
 environment with GCC 13 and a bootstrapped `vcpkg` checkout at the baseline from
 [`vcpkg-configuration.json`](./vcpkg-configuration.json).
 
@@ -119,12 +119,24 @@ Build the image:
 Build the project inside the container:
 ```bash
 ./scripts/container_build.sh
+# Optional custom build dir (default: build_container)
+BUILD_DIR=build_container ./scripts/container_build.sh
+```
+
+Start an interactive shell in the container:
+```bash
+./scripts/container_shell.sh
+# run a one-off command instead of opening bash
+./scripts/container_shell.sh ctest --test-dir build_container -V
 ```
 
 Notes:
 - The repo is bind-mounted into `/work`, so container builds write into the normal `build/` directory.
 - Override the image tag with `SCENARIO_FMU_IMAGE=...`.
 - Override the CMake build type with `BUILD_TYPE=Debug` or `BUILD_TYPE=Release`.
+- Override the container build directory with `BUILD_DIR=...` (default: `build_container`).
+- The script uses `--userns=keep-id` to preserve host file ownership.
+- `container_shell.sh` auto-builds the image if missing (`BUILD_IF_MISSING=0` disables this).
 
 ## Tests
 
@@ -166,4 +178,3 @@ build and package before executing
 - Outputs:
   - CSV: `reference_results/results.csv` 
   - Plot: `reference_results/results.png`
-
