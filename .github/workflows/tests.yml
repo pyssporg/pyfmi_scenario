@@ -1,0 +1,47 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Native toolchain
+        # The FMU runtime is compiled when an FMU is packaged, not on install.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++
+
+      - name: Install
+        # pyfmi-interfaces is not on PyPI. Install the immutable release-asset
+        # wheel first so the editable install resolves its >=0.5.2 pin; an
+        # unreleased sibling tag fails here, by design. The experimental
+        # pyssp_standard wheel is a direct URL in pyproject.toml.
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            https://github.com/pyssporg/pyfmi_interfaces/releases/download/v0.5.2/pyfmi_interfaces-0.5.2-py3-none-any.whl
+          python -m pip install -e ".[dev]"
+
+      - name: Lint
+        run: ruff check src tests
+
+      - name: Tests
+        run: python -m pytest
+
+      - name: Tests leave the checkout clean
+        run: git diff --exit-code && test -z "$(git status --porcelain)"

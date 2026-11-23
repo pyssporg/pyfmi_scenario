@@ -1,96 +1,94 @@
-# Scenario Data Format
+# Scenario data format
 
-The Scenario FMU receives its behavior through the string parameter
-`scenario_input`.
-
-Each line defines one output series.
-
-## Format
+The Scenario FMU receives its behaviour through the String parameter
+`scenario_input`. The value is a compact grammar: one output series per
+line.
 
 ```text
 name;interpolation;time_0,value_0;time_1,value_1;...
 ```
 
-Multiple series are separated by newlines:
+Multiple lines define multiple outputs:
 
 ```text
-speed;L;0,0;5,10;10,10
-mode;ZOH;0,0;3,1;7,2
-lane;NN;0,1;10,2
+Alt;L;0.0,0.0;300.0,10000.0
+Mach;L;0.0,0.0;300.0,1.2
+heat_load;ZOH;0.0,50.0;150.0,4000.0
 ```
 
 ## Fields
 
-- `name`: Output variable name exposed in `modelDescription.xml`
-- `interpolation`: Interpolation mode used by the FMU
-- `time_i,value_i`: One sample point in the series
+- `name`: the output variable name, which becomes a `ScalarVariable` name in
+  `modelDescription.xml`. Names must be unique within one scenario.
+- `interpolation`: one of the mode codes below.
+- `time_i,value_i`: one sample. Times must be finite, strictly increasing, and
+  values must be finite. Fields are trimmed, so `name ; L ; 0, 1` is accepted.
 
-## Supported Interpolation Codes
+## Interpolation modes
 
-The repository currently uses these interpolation codes in tests and examples:
+| Code | Meaning | Implemented |
+|------|---------|-------------|
+| `L` | Linear between samples | yes |
+| `ZOH` | Zero-order hold: the value of the left sample | yes |
+| `NN` | Nearest neighbour, with a tie choosing the left sample | yes |
+| `C` | Cubic | **no** — declared upstream, rejected with an unsupported-mode error |
 
-- `L`: Linear interpolation
-- `ZOH`: Zero-order hold
-- `NN`: Nearest-neighbor interpolation
+The Python reference evaluator in `src/pyfmu_scenario/series.py` is the oracle
+for the generated runtime. Its semantics, which mirror the upstream C++:
 
-## Example
+- a time before the first sample evaluates to `0.0`, for every mode;
+- a time exactly on a sample evaluates to that sample's value;
+- `L` interpolates linearly inside a segment;
+- `ZOH` holds the left sample through the segment;
+- `NN` picks the nearer endpoint, and an exact midpoint picks the left sample;
+- a time after the last sample holds the last value for every mode, so `L` is
+  not extrapolated;
+- a single-sample series holds its only value at and after its time. (The
+  upstream C++ reads past its array here; the Python oracle deliberately does
+  not.)
 
-```text
-var1;L;1,0;3,0.5;5,4;9,2
-var2;ZOH;2,0;3,0.5;5,4;9,2
-var3;NN;0,0;1,0.5;2,4;3,2
-```
+## FMU mapping
 
-This creates three FMU outputs:
+- Value reference `0` and XML index `1` are the parameter `scenario_input`
+  (String, causality `parameter`, variability `tunable`).
+- Outputs are numbered `1..N` by value reference and `2..N+1` by XML index, in
+  declaration order.
+- The parameter start value is the canonical serialized scenario text; outputs
+  have no start value.
 
-- `var1`
-- `var2`
-- `var3`
+## Canonical serialization
 
-The corresponding FMI value references start at `1`. Value reference `0` is
-reserved for the string parameter `scenario_input`.
-
-## Behavior Model
-
-The FMU:
-
-- Stores the raw string through `fmi2SetString`
-- Parses the series during `fmi2ExitInitializationMode`
-- Advances internal time during `fmi2DoStep`
-- Evaluates outputs at the current time when `fmi2GetReal` is called
-
-## Authoring Guidance
-
-- Use one signal per line.
-- Keep timestamps monotonic within a series.
-- Use explicit decimal points when possible to avoid ambiguity.
-- Keep names stable, because they become FMU output variable names.
-
-## Common Patterns
-
-Constant value with `ZOH`:
+`serialize_scenario` writes each sample with Python's shortest round-trippable
+float representation, joined without spaces:
 
 ```text
-enable;ZOH;0,1
+Alt;L;0.0,0.0;300.0,10000.0
 ```
 
-Ramp with `L`:
+Parsing the canonical text and serializing it again is stable. Parsing the
+original authoring text may normalize numbers (`1,0` becomes `1.0,0.0`); this
+is intentional, because the start value must be reproducible.
 
-```text
-speed;L;0,0;2,4;4,8
-```
+## Errors
 
-Discrete mode switches:
+`parse_scenario` raises a typed `ScenarioError` subclass rather than ignoring a
+defect:
 
-```text
-mode;NN;0,0;5,1;10,2
-```
+| Error | Cause |
+|-------|-------|
+| `EmptyScenarioError` | no non-empty series |
+| `MissingFieldError` | empty name, interpolation, sample, or line |
+| `DuplicateSeriesNameError` | two series share a name |
+| `NonMonotonicTimeError` | a sample time is not strictly greater than its predecessor |
+| `BadNumberError` | a time or value is not a finite number |
+| `UnknownInterpolationError` | a mode code outside `L`, `ZOH`, `NN`, `C` |
+| `UnsupportedInterpolationError` | the declared but unimplemented `C` mode |
 
-## Where This Is Used
+## Limitations
 
-You can supply this format through:
-
-- `scenario-fmu-package --scenario-data ...`
-- `scenario-fmu-ssv --scenario-data ...`
-- `scenario-fmu-run --scenario-input ...`
-- Direct FMI parameter setting on `scenario_input`
+- This format is scenario data, not SSP parameter-set semantics. An `.ssv`
+  generated by `write_parameter_set` carries the same text as one String
+  parameter; it does not reinterpret the series as SSP parameters.
+- FMI 3.0 and Model Exchange are out of scope; the producer targets FMI 2.0
+  Co-Simulation only.
+- Cubic interpolation (`C`) remains declared and unsupported.

@@ -1,134 +1,103 @@
-# scenario_fmu
+# pyfmu_scenario
 
-`scenario_fmu` is a small FMI 2.0 Co-Simulation project for turning
-time-series scenario data into an FMU.
+`pyfmu_scenario` turns scenario time-series text into one packaged FMI 2.0
+Co-Simulation FMU. The FMU exposes a single String parameter,
+`scenario_input`, and one Real output per named series. The scenario data
+travels inside the FMU, so an importing tool reads the outputs without a
+custom data loader.
 
-The natural way to use the project is through its Python package. The Python
-API packages the compiled FMU binary, generates parameter sets, and provides a
-local runner for quick validation.
+## What it is not
 
-The repository has two main parts:
+- It is an FMU producer, not a SysML parser.
+- It emits no SSD, SSV, SSM, or SSP. The `ssv` helper writes one parameter set
+  for `scenario_input`; it does not reinterpret the series as SSP parameters.
+- It does not assemble systems. `pyssp_sysml2` consumes the packaged FMU.
+- It does not target FMI 3.0 or Model Exchange.
 
-- A C++20 shared library that implements the FMI 2.0 Co-Simulation interface.
-- A Python package that packages the library into an `.fmu`, emits `.ssv`
-  parameter sets, and runs the FMU locally with FMPy.
+## Install
 
-This README is the entry point. Task-specific details live in `docs/` so the
-project stays easy to navigate.
-
-## What You Can Do
-
-- Build the Scenario FMU shared library.
-- Package the library as a valid `.fmu`.
-- Author scenario data as compact strings or parameter values.
-- Generate SSP parameter sets (`.ssv`) for `scenario_input`.
-- Run and inspect the FMU locally with FMPy.
-
-## Quick Start
-
-Prerequisites:
-
-- CMake 3.10 or newer
-- Ninja
-- A C++20 compiler
-- `VCPKG_ROOT` pointing to a working vcpkg checkout
-- Python 3.8 or newer if you want packaging or runner tools
-
-Build the shared library once:
+Python 3.11 or newer is required.
 
 ```bash
-git submodule update --init --recursive
-cmake --preset=vcpkg
-cmake --build build -j
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
 ```
 
-Install the Python package:
+The runtime dependencies are not PyPI releases:
+`experimental_pyssp_standard` is a direct-URL wheel from its GitHub release,
+and `pyfmi-interfaces` comes from its own release assets. Do not install a PyPI
+`pyssp_standard` release into the same environment; it supplies the same
+import package as `experimental_pyssp_standard`.
 
-```bash
-python -m pip install -e ./python
-```
+`cmake` and `g++` are needed only when packaging an FMU. The Python wheel is
+pure Python.
 
-Create an FMU from Python:
+## Quickstart
 
-```python
-from scenario_fmu_generator import ScenarioFmuPackager
-
-packager = ScenarioFmuPackager("scenario", "scenario", None)
-packager.add_raw("speed;L;0,0;5,10;10,10")
-packager.build("build/scenario.fmu")
-```
-
-Run the packaged FMU:
-
-```bash
-scenario-fmu-run --fmu build/scenario.fmu --stop 10 --step 0.1
-```
-
-Results are written to `reference_results/` by default.
-
-Run tests when you need to validate the native build:
-
-```bash
-ctest --test-dir build -V
-```
-
-## Common Workflows
-
-For the shortest path to a working setup, start here:
-
-- [Getting started](docs/getting-started.md)
-- [Python API and tooling](docs/python-tools.md)
-- [Scenario data format](docs/scenario-format.md)
-- [Development notes](docs/development.md)
-
-## Repository Layout
+Write a scenario file, `scenario.txt`:
 
 ```text
-libs/scenario_fmu/     C++20 FMI 2.0 shared library
-python/                Python package and CLI tools
-test/                  CTest / GoogleTest test targets
-scripts/               Optional container-based helper scripts
-containers/            Container definition for reproducible builds
-3rdParty/reference_fmu/ Reference FMU submodule
+Alt;L;0.0,0.0;300.0,10000.0
+Mach;L;0.0,0.0;300.0,1.2
+heat_load;ZOH;0.0,50.0;150.0,4000.0
 ```
 
-## Architecture Summary
-
-The FMU exposes:
-
-- One tunable string parameter: `scenario_input`
-- One output per parsed series entry
-- FMI 2.0 Co-Simulation entry points implemented in
-  `libs/scenario_fmu/src/scenario_fmu_interface.cpp`
-
-At initialization, the FMU parses `scenario_input` into internal series data.
-At each `fmi2DoStep`, it advances its internal time and evaluates the configured
-series at the current communication point.
-
-## Ease-of-Use Notes
-
-- The built shared library is copied into the Python package automatically after
-  each CMake build.
-- The Python package is the intended day-to-day interface for creating FMUs and
-  related artifacts.
-- `scenario-fmu-package` can generate a generic FMU even if no scenario data is
-  provided.
-- `scenario-fmu-ssv` generates a parameter set for `scenario_input`, which is
-  useful when integrating into SSP-based workflows.
-- `scenario-fmu-run` provides a quick local smoke test and writes CSV output.
-
-## Optional Container Workflow
-
-If you prefer a reproducible Ubuntu 22.04 + GCC 13 environment:
+Package it as an FMU, generate a matching parameter set, and run it:
 
 ```bash
-./scripts/container_build.sh
+pyfmu-scenario package --scenario scenario.txt --output scenario.fmu
+pyfmu-scenario ssv --scenario scenario.txt --output scenario.ssv
+pyfmu-scenario run --fmu scenario.fmu --output results.csv
 ```
 
-Open a shell in that environment:
+`package` also accepts `--scenario-text` for an inline scenario and `--guid` to
+override the default GUID. `run` simulates the model's default experiment with
+FMPy and writes a CSV when `--output` is given. Each subcommand accepts
+`--help`. The format, interpolation semantics, error types, and FMU mapping are
+in [docs/scenario-format.md](docs/scenario-format.md).
 
-```bash
-./scripts/container_shell.sh
+## Architecture and boundary
+
+The producer is one direction:
+
+```text
+scenario text -> parse_scenario -> Scenario -> build_reduction
+              -> pyfmi_interfaces reduction
+              -> modelDescription.xml, C/C++ runtime, .fmu archive
 ```
 
-These scripts use `podman`.
+- `pyfmi_interfaces` owns the FMI plumbing: `modelDescription.xml`
+  serialization, C headers, C++ Co-Simulation entry points, FMI headers, and
+  the `.fmu` zip.
+- `pyssp_standard` owns the FMI 2.0 XML objects and the archive and
+  parameter-set facades.
+- This repository owns the scenario grammar, the reference evaluator, the five
+  model hooks, and the CMake build.
+
+No FMI XML, `.fmu` packaging, or FMI runtime is hand-rolled here.
+
+## Requirements and limits
+
+- FMI 2.0 Co-Simulation only; linux64 is the first supported platform.
+- Scenario data must arrive through the String parameter. The generated
+  runtime cannot use a resource location.
+- `L`, `ZOH`, and `NN` interpolation are implemented. `C` is declared by the
+  grammar and rejected as unsupported.
+- Packaging needs `cmake` and `g++`; installing the Python package does not.
+- Identity is fixed: model name and identifier are `scenario`, the generation
+  tool is `pyfmu-scenario`, and the default GUID is
+  `9524b75e-dc71-47cd-a02f-e22b95a3f76d`. `build_reduction(..., guid=...)`
+  overrides it.
+
+## Documentation
+
+- [Scenario data format](docs/scenario-format.md)
+- [Intent](docs/breakdown/00-intent/intent.md)
+- [Product breakdown](docs/breakdown/)
+- [Contributor rules](AGENTS.md)
+- [Changelog](CHANGELOG.md)
+
+## License
+
+MIT, © 2024 Linköping University.

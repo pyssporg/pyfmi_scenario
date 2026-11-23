@@ -1,6 +1,0 @@
-scenario {
-  global:
-    fmi2*;          /* export all FMI v2 C API symbols */
-  local:
-    *;              /* hide everything else */
-};

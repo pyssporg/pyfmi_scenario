@@ -1,0 +1,3 @@
+[layout]
+archive = "../archive/archive.zip"
+repo_root = "../.."
