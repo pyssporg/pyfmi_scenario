@@ -57,6 +57,15 @@ FMPy and writes a CSV when `--output` is given. Each subcommand accepts
 `--help`. The format, interpolation semantics, error types, and FMU mapping are
 in [docs/scenario-format.md](docs/scenario-format.md).
 
+## Examples
+
+Runnable examples live in [examples/](examples/README.md): CLI quickstart, the
+Python API, the SSV parameter set, and a FMPy simulation.
+
+```bash
+bash examples/01-cli-quickstart/run.sh
+```
+
 ## Architecture and boundary
 
 The producer is one direction:

@@ -103,7 +103,7 @@ a `pyfmi_interfaces` reduction, generates the FMI 2.0 runtime and
   a direct-URL wheel and `pyfmi-interfaces` comes from its release assets.
 - Tests: `python -m pytest`; the suite includes the network-free grammar,
   evaluator, interface-model, XML, and parameter-set checks.
-- Lint: `ruff check src tests`.
+- Lint: `ruff check src tests examples`.
 - CLI: `pyfmu-scenario package`, `pyfmu-scenario ssv`, and
   `pyfmu-scenario run`; each accepts `--help`.
 - Packaging an FMU needs `cmake` and `g++`; `pyfmu-scenario package` writes the
