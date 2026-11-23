@@ -99,6 +99,21 @@ No FMI XML, `.fmu` packaging, or FMI runtime is hand-rolled here.
   `9524b75e-dc71-47cd-a02f-e22b95a3f76d`. `build_reduction(..., guid=...)`
   overrides it.
 
+## Development
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+
+python -m pytest
+ruff check src tests examples
+```
+
+`python -m pytest` is the CI test selection; `cmake` and `g++` are needed only
+when a test or an example packages an FMU. Contributor rules and layout are in
+[AGENTS.md](AGENTS.md).
+
 ## Documentation
 
 - [Scenario data format](docs/scenario-format.md)

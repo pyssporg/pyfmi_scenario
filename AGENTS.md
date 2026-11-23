@@ -83,10 +83,7 @@ a `pyfmi_interfaces` reduction, generates the FMI 2.0 runtime and
 ## Conventions
 
 - `README.md` is the landing page for users; `AGENTS.md` is for contributors.
-- Current state lives in `docs/breakdown/` leaves, in the present tense. Dated
-  decisions belong in the decision archive, read with `pb archive`.
-- Regenerate generated registers with `python3 <pb> registers`; never edit them
-  by hand.
+- Current state lives in `docs/breakdown/` leaves, in the present tense.
 - After breakdown edits, run `python3 <pb> check --strict` and
   `python3 <pb> node-size --strict` with the product-breakdown skill's `pb`
   script.
