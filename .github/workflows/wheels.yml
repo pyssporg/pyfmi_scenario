@@ -19,13 +19,11 @@ jobs:
           python-version: "3.12"
 
       - name: Install
-        # pyfmi-interfaces is not on PyPI; the release-asset wheel satisfies
-        # the pyproject pin. The editable install is also how the version guard
+        # The sibling dependencies are direct-URL release pins in
+        # pyproject.toml. The editable install is also how the version guard
         # reads pyfmu_scenario.__version__: dynamic = ["version"].
         run: |
           python -m pip install --upgrade pip build
-          python -m pip install \
-            https://github.com/pyssporg/pyfmi_interfaces/releases/download/v0.5.2/pyfmi_interfaces-0.5.2-py3-none-any.whl
           python -m pip install -e ".[dev]"
 
       - name: Build wheel and sdist
