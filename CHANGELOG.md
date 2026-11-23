@@ -24,6 +24,14 @@ and this project adheres to
 - Moved the scenario producer from the prototype `scenario_fmu` package to
   `pyfmu_scenario`, with `scenario_input` as the only FMU parameter.
 
+## [0.1.1] - 2026-11-23
+
+### Fixed
+
+- Ship `pyfmu_scenario/_runtime/scenario_model.cpp` as wheel package data, so an
+  installed producer can package an FMU. The 0.1.0 wheel looked for the hook in
+  a source-checkout path.
+
 ## [0.1.0] - 2026-11-23
 
 ### Added

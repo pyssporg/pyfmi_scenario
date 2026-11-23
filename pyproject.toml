@@ -57,6 +57,9 @@ version = { attr = "pyfmu_scenario.__version__" }
 where = ["src"]
 include = ["pyfmu_scenario*"]
 
+[tool.setuptools.package-data]
+pyfmu_scenario = ["_runtime/*.cpp"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]

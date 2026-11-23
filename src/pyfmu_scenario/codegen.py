@@ -41,11 +41,9 @@ from .model import build_reduction
 #: Prefix the generated C symbols and file names are built from.
 PREFIX = "scenario"
 
-#: Repository root, used to find the checked-in model hook.
-REPO_ROOT = Path(__file__).resolve().parents[2]
-
-#: The hand-written model hook copied over the generated stub.
-MODEL_HOOK_SOURCE = REPO_ROOT / "src" / "runtime" / "scenario_model.cpp"
+#: The hand-written model hook copied over the generated stub. It travels in
+#: the wheel as package data, so an installed package can package an FMU.
+MODEL_HOOK_SOURCE = Path(__file__).resolve().parent / "_runtime" / "scenario_model.cpp"
 
 
 @dataclass(frozen=True)
@@ -268,7 +266,6 @@ def generate_scenario_sources(
 __all__ = [
     "MODEL_HOOK_SOURCE",
     "PREFIX",
-    "REPO_ROOT",
     "ScenarioSources",
     "cmake_text",
     "data_header_name",

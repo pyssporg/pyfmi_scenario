@@ -1,6 +1,6 @@
 """Scenario grammar, reference evaluator, and FMI 2.0 interface model."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .grammar import (
     BadNumberError,
