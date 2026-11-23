@@ -2,28 +2,13 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
-import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO_ROOT / "src"))
+import fmpy
 
-try:
-    import fmpy
-except ImportError:
-    print(
-        "example 04 needs fmpy; install the dev extra with "
-        '`pip install -e ".[dev]"`',
-        file=sys.stderr,
-    )
-    raise SystemExit(1) from None
-
-from pyfmu_scenario import (
-    PARAMETER_NAME,
-    parse_scenario,
-    serialize_scenario,
-)
+from pyfmu_scenario import PARAMETER_NAME, parse_scenario, serialize_scenario
 from pyfmu_scenario.packaging import package_scenario
 
 SCENARIO_TEXT = """\
@@ -33,13 +18,16 @@ mode;NN;0.0,0.0;10.0,3.0
 """
 STOP_TIME = 10.0
 OUTPUT_INTERVAL = 0.5
-OUT = Path(__file__).resolve().parent / "out"
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", type=Path, default=Path("build/examples/04-simulate"))
+    args = parser.parse_args(argv)
+
     scenario = parse_scenario(SCENARIO_TEXT)
-    OUT.mkdir(parents=True, exist_ok=True)
-    fmu = package_scenario(scenario, OUT / "scenario.fmu")
+    args.out.mkdir(parents=True, exist_ok=True)
+    fmu = package_scenario(scenario, args.out / "scenario.fmu")
 
     result = fmpy.simulate_fmu(
         str(fmu),
@@ -51,38 +39,15 @@ def main() -> None:
     )
 
     names = result.dtype.names
-    with (OUT / "results.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as stream:
+    csv_path = args.out / "results.csv"
+    with csv_path.open("w", encoding="utf-8", newline="") as stream:
         writer = csv.writer(stream)
         writer.writerow(names)
         for row in result:
             writer.writerow([row[name] for name in names])
 
-    print(f"FMU: {fmu}")
-    print(f"CSV: {OUT / 'results.csv'} ({len(result)} rows)")
-    print(" ".join(f"{name:>8}" for name in names))
-    for index in (0, len(result) // 2, len(result) - 1):
-        row = result[index]
-        print(" ".join(f"{row[name]:8.4f}" for name in names))
-
-    try:
-        import matplotlib
-
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-    except ImportError:
-        print("matplotlib not installed; skipping outputs.png")
-        return
-
-    figure, axes = plt.subplots()
-    for name in scenario.names:
-        axes.plot(result["time"], result[name], label=name)
-    axes.set_xlabel("time / s")
-    axes.legend()
-    figure.tight_layout()
-    figure.savefig(OUT / "outputs.png")
-    print(f"plot: {OUT / 'outputs.png'}")
+    print(fmu)
+    print(csv_path)
 
 
 if __name__ == "__main__":

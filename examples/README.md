@@ -1,87 +1,94 @@
 # pyfmu_scenario examples
 
-Four small, runnable examples. Each writes only to its own `out/` directory,
-which is gitignored.
+Four runnable paths from scenario text (or a `Scenario` in Python) to a packaged
+FMI 2.0 Co-Simulation FMU.
 
-## Prerequisites
+## Run
 
-From the repository root:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -e ".[dev]"
-```
-
-- `cmake` and `g++` are required by every example that packages an `.fmu`
-  (01, 02, 04).
-- 04 uses `fmpy` and writes `outputs.png` only when `matplotlib` is available.
-- Examples 02-04 add `src/` to `sys.path`, so they also run from a source
-  checkout without an editable install. 01 falls back to
-  `python -m pyfmu_scenario` when the `pyfmu-scenario` console script is absent.
-
-## 01 - CLI quickstart
-
-`scenario.txt` has three series: a linear ramp (`L`), a zero-order-hold gear
-(`ZOH`), and a nearest-neighbour mode (`NN`). `run.sh` packages the FMU, writes
-the SSV, and simulates it with FMPy:
+From the workspace root:
 
 ```bash
-bash examples/01-cli-quickstart/run.sh
+bash repos/pyfmu_scenario/examples/01-cli-quickstart/run.sh
 ```
 
-Outputs: `out/scenario.fmu`, `out/scenario.ssv`, `out/results.csv`.
+The headline example: `scenario.txt` declares a linear ramp (`L`), a
+zero-order-hold gear (`ZOH`), and a nearest-neighbour mode (`NN`); the script
+packages the FMU, writes the SSV parameter set, and simulates the FMU with
+FMPy.
 
-The CLI equivalents, one by one:
+| Output | Contents |
+| --- | --- |
+| `build/examples/01-cli-quickstart/scenario.fmu` | the packaged FMU |
+| `build/examples/01-cli-quickstart/scenario.ssv` | `scenario_input` as an SSP 1.0 parameter set |
+| `build/examples/01-cli-quickstart/results.csv` | the FMPy simulation result |
+
+```text
+build/examples/01-cli-quickstart/scenario.fmu
+build/examples/01-cli-quickstart/scenario.ssv
+build/examples/01-cli-quickstart/results.csv
+```
+
+The script accepts one optional `--out DIR`. The CLI calls it makes, one by
+one, are `pyfmu-scenario package`, `pyfmu-scenario ssv`, and `pyfmu-scenario
+run`.
+
+### Python API
+
+Builds `Sample`/`Series`/`Scenario` in code and packages the FMU with a custom
+GUID:
 
 ```bash
-pyfmu-scenario package --scenario examples/01-cli-quickstart/scenario.txt \
-  --output examples/01-cli-quickstart/out/scenario.fmu
-pyfmu-scenario ssv --scenario examples/01-cli-quickstart/scenario.txt \
-  --output examples/01-cli-quickstart/out/scenario.ssv
-pyfmu-scenario run --fmu examples/01-cli-quickstart/out/scenario.fmu \
-  --output examples/01-cli-quickstart/out/results.csv
+python repos/pyfmu_scenario/examples/02-python-api/run.py
 ```
 
-## 02 - Python API
+```text
+build/examples/02-python-api/scenario.fmu
+```
 
-Builds `Sample`/`Series`/`Scenario` in code, round-trips the canonical text,
-packages with a custom GUID, and reads the `.fmu` back with `zipfile`:
+### Parameter set
+
+Parses `examples/01-cli-quickstart/scenario.txt` and writes the
+`scenario_input` binding as an SSP 1.0 parameter set named `ScenarioSet`:
 
 ```bash
-python examples/02-python-api/run.py
+python repos/pyfmu_scenario/examples/03-parameter-set/run.py
 ```
 
-Output: `out/scenario.fmu`, plus the model name, GUID, variables, and archive
-entries printed to the terminal.
-
-## 03 - Parameter set
-
-Parses `examples/01-cli-quickstart/scenario.txt` and writes the `scenario_input`
-binding as an SSP 1.0 parameter set named `ScenarioSet`:
-
-```bash
-python examples/03-parameter-set/run.py
+```text
+build/examples/03-parameter-set/scenario.ssv
 ```
 
-Output: `out/scenario.ssv`; the script prints the root element, namespace, and
-binding.
-
-## 04 - Simulate
+### Simulate
 
 Packages a scenario and drives it with `fmpy.simulate_fmu`, passing the text
 through `scenario_input` (`start_values`) and selecting the series as outputs:
 
 ```bash
-python examples/04-simulate/run.py
+python repos/pyfmu_scenario/examples/04-simulate/run.py
 ```
 
-Outputs: `out/scenario.fmu`, `out/results.csv`, and `out/outputs.png` when
-`matplotlib` is installed. If `fmpy` is missing the script exits with an install
-hint instead of faking a run.
+```text
+build/examples/04-simulate/scenario.fmu
+build/examples/04-simulate/results.csv
+```
+
+## Setup
+
+Use the workspace virtualenv and an editable install; no `PYTHONPATH` is
+needed:
+
+```bash
+source .venv/bin/activate  # the workspace venv, see the workspace README.md
+pip install -e repos/pyfmu_scenario
+pip install fmpy
+```
+
+Packaging an `.fmu` compiles the generated FMI runtime, so `cmake` and `g++`
+must be on `PATH`. Every example accepts one optional `--out DIR`; the default
+is the gitignored `build/examples/<name>/`.
 
 ## Notes
 
-- Outputs are written only under each example's `out/`; `out/` is gitignored.
+- Outputs go only under the chosen `--out` directory (`build/` is gitignored).
 - `C` (cubic) is declared by the grammar but unsupported: `parse_scenario`,
   `Series`, and the CLI all reject it. Use `L`, `ZOH`, or `NN`.

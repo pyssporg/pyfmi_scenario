@@ -2,20 +2,25 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="$(cd "$HERE/../.." && pwd)"
-OUT="$HERE/out"
+OUT="build/examples/01-cli-quickstart"
+
+usage() {
+    echo "usage: run.sh [--out DIR]" >&2
+    exit 2
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --out) [[ $# -ge 2 ]] || usage; OUT="$2"; shift 2 ;;
+        -h|--help) usage ;;
+        *) usage ;;
+    esac
+done
+
 mkdir -p "$OUT"
 
-if command -v pyfmu-scenario >/dev/null 2>&1; then
-    PYFMU=(pyfmu-scenario)
-else
-    # Source checkout without an installed console script.
-    export PYTHONPATH="$ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
-    PYFMU=("${PYTHON:-python3}" -m pyfmu_scenario)
-fi
-
-"${PYFMU[@]}" package --scenario "$HERE/scenario.txt" \
+python3 -m pyfmu_scenario package --scenario "$HERE/scenario.txt" \
     --output "$OUT/scenario.fmu"
-"${PYFMU[@]}" ssv --scenario "$HERE/scenario.txt" \
+python3 -m pyfmu_scenario ssv --scenario "$HERE/scenario.txt" \
     --output "$OUT/scenario.ssv"
-"${PYFMU[@]}" run --fmu "$OUT/scenario.fmu" --output "$OUT/results.csv"
+python3 -m pyfmu_scenario run --fmu "$OUT/scenario.fmu" --output "$OUT/results.csv"
