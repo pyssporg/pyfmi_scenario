@@ -96,7 +96,7 @@ a `pyfmi_interfaces` reduction, generates the FMI 2.0 runtime and
 
 - Python >= 3.11. No virtualenv is tracked; create one per checkout.
 - Install: `python -m venv .venv && .venv/bin/pip install -e ".[dev]"`. The
-  runtime dependencies are not PyPI releases: `experimental_pyssp_standard` is
+  runtime dependencies are not PyPI releases: `pyssp_standard_exp` is
   a direct-URL wheel and `pyfmi-interfaces` comes from its release assets.
 - Tests: `python -m pytest`; the suite includes the network-free grammar,
   evaluator, interface-model, XML, and parameter-set checks.

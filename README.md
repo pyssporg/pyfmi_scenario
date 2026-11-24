@@ -25,10 +25,10 @@ python -m pip install -e ".[dev]"
 ```
 
 The runtime dependencies are not PyPI releases:
-`experimental_pyssp_standard` is a direct-URL wheel from its GitHub release,
+`pyssp_standard_exp` is a direct-URL wheel from its GitHub release,
 and `pyfmi-interfaces` comes from its own release assets. Do not install a PyPI
 `pyssp_standard` release into the same environment; it supplies the same
-import package as `experimental_pyssp_standard`.
+import package as `pyssp_standard_exp`.
 
 `cmake` and `g++` are needed only when packaging an FMU. The Python wheel is
 pure Python.
