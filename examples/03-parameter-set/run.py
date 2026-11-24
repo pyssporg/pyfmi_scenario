@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from pyfmu_scenario import parse_scenario, write_parameter_set
+from pyfmi_scenario import parse_scenario, write_parameter_set
 
 SCENARIO_PATH = Path(__file__).resolve().parents[1] / "01-cli-quickstart" / "scenario.txt"
 

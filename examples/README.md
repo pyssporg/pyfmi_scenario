@@ -1,4 +1,4 @@
-# pyfmu_scenario examples
+# pyfmi_scenario examples
 
 Four runnable paths from scenario text (or a `Scenario` in Python) to a packaged
 FMI 2.0 Co-Simulation FMU.
@@ -8,7 +8,7 @@ FMI 2.0 Co-Simulation FMU.
 From the workspace root:
 
 ```bash
-bash repos/pyfmu_scenario/examples/01-cli-quickstart/run.sh
+bash repos/pyfmi_scenario/examples/01-cli-quickstart/run.sh
 ```
 
 The headline example: `scenario.txt` declares a linear ramp (`L`), a
@@ -29,7 +29,7 @@ build/examples/01-cli-quickstart/results.csv
 ```
 
 The script accepts one optional `--out DIR`. The CLI calls it makes, one by
-one, are `pyfmu-scenario package`, `pyfmu-scenario ssv`, and `pyfmu-scenario
+one, are `pyfmi-scenario package`, `pyfmi-scenario ssv`, and `pyfmi-scenario
 run`.
 
 ### Python API
@@ -38,7 +38,7 @@ Builds `Sample`/`Series`/`Scenario` in code and packages the FMU with a custom
 GUID:
 
 ```bash
-python repos/pyfmu_scenario/examples/02-python-api/run.py
+python repos/pyfmi_scenario/examples/02-python-api/run.py
 ```
 
 ```text
@@ -51,7 +51,7 @@ Parses `examples/01-cli-quickstart/scenario.txt` and writes the
 `scenario_input` binding as an SSP 1.0 parameter set named `ScenarioSet`:
 
 ```bash
-python repos/pyfmu_scenario/examples/03-parameter-set/run.py
+python repos/pyfmi_scenario/examples/03-parameter-set/run.py
 ```
 
 ```text
@@ -64,7 +64,7 @@ Packages a scenario and drives it with `fmpy.simulate_fmu`, passing the text
 through `scenario_input` (`start_values`) and selecting the series as outputs:
 
 ```bash
-python repos/pyfmu_scenario/examples/04-simulate/run.py
+python repos/pyfmi_scenario/examples/04-simulate/run.py
 ```
 
 ```text
@@ -79,7 +79,7 @@ needed:
 
 ```bash
 source .venv/bin/activate  # the workspace venv, see the workspace README.md
-pip install -e repos/pyfmu_scenario
+pip install -e repos/pyfmi_scenario
 pip install fmpy
 ```
 

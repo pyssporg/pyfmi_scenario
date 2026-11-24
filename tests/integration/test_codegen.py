@@ -6,14 +6,14 @@ from pathlib import Path
 
 import pytest
 
-from pyfmu_scenario.codegen import (
+from pyfmi_scenario.codegen import (
     MODEL_HOOK_SOURCE,
     data_header_name,
     generate_scenario_sources,
     output_bindings,
 )
-from pyfmu_scenario.grammar import parse_scenario
-from pyfmu_scenario.model import build_reduction
+from pyfmi_scenario.grammar import parse_scenario
+from pyfmi_scenario.model import build_reduction
 
 pytestmark = pytest.mark.integration
 

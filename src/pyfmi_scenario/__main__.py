@@ -1,4 +1,4 @@
-"""``python -m pyfmu_scenario`` entry point."""
+"""``python -m pyfmi_scenario`` entry point."""
 
 from __future__ import annotations
 

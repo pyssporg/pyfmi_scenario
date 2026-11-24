@@ -8,8 +8,8 @@ from pathlib import Path
 
 import fmpy
 
-from pyfmu_scenario import PARAMETER_NAME, parse_scenario, serialize_scenario
-from pyfmu_scenario.packaging import package_scenario
+from pyfmi_scenario import PARAMETER_NAME, parse_scenario, serialize_scenario
+from pyfmi_scenario.packaging import package_scenario
 
 SCENARIO_TEXT = """\
 Alt;L;0.0,0.0;10.0,1000.0

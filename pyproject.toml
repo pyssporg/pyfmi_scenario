@@ -3,7 +3,7 @@ requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pyfmu-scenario"
+name = "pyfmi-scenario"
 dynamic = ["version"]
 description = "Scenario-grammar interface model and FMI 2.0 Co-Simulation artifacts."
 readme = "README.md"
@@ -45,20 +45,20 @@ dev = [
 ]
 
 [project.scripts]
-pyfmu-scenario = "pyfmu_scenario.cli:main"
+pyfmi-scenario = "pyfmi_scenario.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 
 [tool.setuptools.dynamic]
-version = { attr = "pyfmu_scenario.__version__" }
+version = { attr = "pyfmi_scenario.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["pyfmu_scenario*"]
+include = ["pyfmi_scenario*"]
 
 [tool.setuptools.package-data]
-pyfmu_scenario = ["_runtime/*.cpp"]
+pyfmi_scenario = ["_runtime/*.cpp"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

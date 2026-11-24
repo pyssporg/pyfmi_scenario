@@ -19,8 +19,8 @@ done
 
 mkdir -p "$OUT"
 
-python3 -m pyfmu_scenario package --scenario "$HERE/scenario.txt" \
+python3 -m pyfmi_scenario package --scenario "$HERE/scenario.txt" \
     --output "$OUT/scenario.fmu"
-python3 -m pyfmu_scenario ssv --scenario "$HERE/scenario.txt" \
+python3 -m pyfmi_scenario ssv --scenario "$HERE/scenario.txt" \
     --output "$OUT/scenario.ssv"
-python3 -m pyfmu_scenario run --fmu "$OUT/scenario.fmu" --output "$OUT/results.csv"
+python3 -m pyfmi_scenario run --fmu "$OUT/scenario.fmu" --output "$OUT/results.csv"

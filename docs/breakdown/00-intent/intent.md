@@ -2,14 +2,14 @@
 id: INFO-001
 type: info
 title: Intent
-summary: pyfmu_scenario turns scenario-grammar text into one FMI 2.0 Co-Simulation interface and a pure-Python reference evaluator, without owning SSV semantics or the generated runtime.
+summary: pyfmi_scenario turns scenario-grammar text into one FMI 2.0 Co-Simulation interface and a pure-Python reference evaluator, without owning SSV semantics or the generated runtime.
 date: 2026-11-23
 status: current
 ---
 
 # Intent
 
-`pyfmu_scenario` owns the scenario-specific layer of the Scenario FMU. It
+`pyfmi_scenario` owns the scenario-specific layer of the Scenario FMU. It
 parses the `scenario_input` grammar into typed series, evaluates that data in
 pure Python as the reference oracle, describes the FMU as a
 `pyfmi_interfaces` `Reduction`, and emits the FMI 2.0

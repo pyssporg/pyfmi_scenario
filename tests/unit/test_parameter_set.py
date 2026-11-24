@@ -2,8 +2,8 @@ from pathlib import Path
 
 from pyssp_standard import SSV
 
-from pyfmu_scenario.grammar import parse_scenario, serialize_scenario
-from pyfmu_scenario.parameter_set import write_parameter_set
+from pyfmi_scenario.grammar import parse_scenario, serialize_scenario
+from pyfmi_scenario.parameter_set import write_parameter_set
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 SCENARIO = parse_scenario(

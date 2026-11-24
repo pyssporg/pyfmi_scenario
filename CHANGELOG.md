@@ -22,13 +22,13 @@ and this project adheres to
 - Adopted the pyssporg repository structure: the `src/` package layout, the
   core repository artifacts, and the two CI workflows.
 - Moved the scenario producer from the prototype `scenario_fmu` package to
-  `pyfmu_scenario`, with `scenario_input` as the only FMU parameter.
+  `pyfmi_scenario`, with `scenario_input` as the only FMU parameter.
 
 ## [0.1.1] - 2026-11-23
 
 ### Fixed
 
-- Ship `pyfmu_scenario/_runtime/scenario_model.cpp` as wheel package data, so an
+- Ship `pyfmi_scenario/_runtime/scenario_model.cpp` as wheel package data, so an
   installed producer can package an FMU. The 0.1.0 wheel looked for the hook in
   a source-checkout path.
 
@@ -43,7 +43,7 @@ and this project adheres to
   reduction.
 - `modelDescription.xml` generation through `pyssp_standard` and an SSV
   parameter-set helper for the scenario text.
-- A `pyfmu-scenario` console script with `package`, `ssv`, and `run`
+- A `pyfmi-scenario` console script with `package`, `ssv`, and `run`
   subcommands.
 
 ### Changed

@@ -27,7 +27,7 @@ become. It is the first document to read, not a reference of last resort.
 
 ## Repository Focus
 
-`pyfmu_scenario` turns scenario time-series text into one packaged FMI 2.0
+`pyfmi_scenario` turns scenario time-series text into one packaged FMI 2.0
 Co-Simulation FMU. It reads the `scenario_input` grammar into typed series,
 evaluates that data in pure Python as the reference oracle, describes the FMU as
 a `pyfmi_interfaces` reduction, generates the FMI 2.0 runtime and
@@ -37,7 +37,7 @@ a `pyfmi_interfaces` reduction, generates the FMI 2.0 runtime and
   scenario text.
 - Outputs: one Real output per declared series, named after the series, in
   declaration order.
-- The Python package lives in `src/pyfmu_scenario/`; packaging writes a build
+- The Python package lives in `src/pyfmi_scenario/`; packaging writes a build
   directory with a generated `CMakeLists.txt` that compiles the runtime.
 - The repository is an FMU producer only. It does not parse SysML and does not
   emit SSD, SSV, SSM, or SSP; the SSV helper writes one parameter set.
@@ -55,7 +55,7 @@ a `pyfmi_interfaces` reduction, generates the FMI 2.0 runtime and
   serialization, archive order is fixed, and no ambient clock enters an
   artifact. The same scenario produces the same bytes.
 - **Output identity is fixed.** `modelName` and `modelIdentifier` are
-  `scenario`, `generationTool` is `pyfmu-scenario`, and the default GUID is
+  `scenario`, `generationTool` is `pyfmi-scenario`, and the default GUID is
   `9524b75e-dc71-47cd-a02f-e22b95a3f76d`. A GUID may be injected, never
   generated locally.
 - **Producer only.** Do not add SysML parsing or SSP assembly. Do not extend
@@ -87,7 +87,7 @@ a `pyfmi_interfaces` reduction, generates the FMI 2.0 runtime and
 - After breakdown edits, run `python3 <pb> check --strict` and
   `python3 <pb> node-size --strict` with the product-breakdown skill's `pb`
   script.
-- Version lives in `src/pyfmu_scenario/__init__.py` only; `pyproject.toml` is
+- Version lives in `src/pyfmi_scenario/__init__.py` only; `pyproject.toml` is
   dynamic and has no `[project].version`.
 - `LICENSE` keeps the upstream MIT text with its Linköping University
   copyright holder line.
@@ -101,8 +101,8 @@ a `pyfmi_interfaces` reduction, generates the FMI 2.0 runtime and
 - Tests: `python -m pytest`; the suite includes the network-free grammar,
   evaluator, interface-model, XML, and parameter-set checks.
 - Lint: `ruff check src tests examples`.
-- CLI: `pyfmu-scenario package`, `pyfmu-scenario ssv`, and
-  `pyfmu-scenario run`; each accepts `--help`.
-- Packaging an FMU needs `cmake` and `g++`; `pyfmu-scenario package` writes the
+- CLI: `pyfmi-scenario package`, `pyfmi-scenario ssv`, and
+  `pyfmi-scenario run`; each accepts `--help`.
+- Packaging an FMU needs `cmake` and `g++`; `pyfmi-scenario package` writes the
   generated sources and `CMakeLists.txt` into a build directory and runs cmake
   there. `--keep-build-dir` keeps it for inspection.

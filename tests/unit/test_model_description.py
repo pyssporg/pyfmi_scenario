@@ -4,8 +4,8 @@ from xml.etree import ElementTree as ET
 
 import pytest
 
-from pyfmu_scenario.grammar import parse_scenario
-from pyfmu_scenario.model import (
+from pyfmi_scenario.grammar import parse_scenario
+from pyfmi_scenario.model import (
     AUTHOR,
     DEFAULT_GUID,
     GENERATION_TOOL,
@@ -14,7 +14,7 @@ from pyfmu_scenario.model import (
     PARAMETER_NAME,
     VERSION,
 )
-from pyfmu_scenario.model_description import build_model_description
+from pyfmi_scenario.model_description import build_model_description
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 SCENARIO = parse_scenario(
@@ -30,7 +30,7 @@ FIXTURE_DIFFERENCES = {
 
 
 def _fixture_path() -> Path:
-    override = os.environ.get("PYFMU_SCENARIO_FIXTURE")
+    override = os.environ.get("PYFMI_SCENARIO_FIXTURE")
     relative = Path(
         "repos/ssp_references/models/fmu/scenario/fmu/modelDescription.xml"
     )

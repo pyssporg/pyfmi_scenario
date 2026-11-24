@@ -2,7 +2,7 @@
  * Model behaviour for the scenario FMU.
  *
  * This file is copied over the generated scenario_model.cpp by
- * pyfmu_scenario.codegen. It implements the five hooks declared in
+ * pyfmi_scenario.codegen. It implements the five hooks declared in
  * scenario_hooks.h against the generated scenario_Instance and vr_map.
  *
  * The runtime contract is one String parameter, scenario_input, holding the

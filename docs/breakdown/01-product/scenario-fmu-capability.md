@@ -9,7 +9,7 @@ status: current
 
 # Scenario FMU capability
 
-`pyfmu_scenario` turns scenario time-series text into one packaged FMI 2.0 Co-Simulation FMU.
+`pyfmi_scenario` turns scenario time-series text into one packaged FMI 2.0 Co-Simulation FMU.
 
 - **Single input:** one String parameter, `scenario_input`, whose value is the canonical serialized scenario text.
 - **Outputs:** one Real output per declared series, named exactly after the series, in declaration order.

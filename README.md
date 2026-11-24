@@ -1,6 +1,6 @@
-# pyfmu_scenario
+# pyfmi_scenario
 
-`pyfmu_scenario` turns scenario time-series text into one packaged FMI 2.0
+`pyfmi_scenario` turns scenario time-series text into one packaged FMI 2.0
 Co-Simulation FMU. The FMU exposes a single String parameter,
 `scenario_input`, and one Real output per named series. The scenario data
 travels inside the FMU, so an importing tool reads the outputs without a
@@ -46,9 +46,9 @@ heat_load;ZOH;0.0,50.0;150.0,4000.0
 Package it as an FMU, generate a matching parameter set, and run it:
 
 ```bash
-pyfmu-scenario package --scenario scenario.txt --output scenario.fmu
-pyfmu-scenario ssv --scenario scenario.txt --output scenario.ssv
-pyfmu-scenario run --fmu scenario.fmu --output results.csv
+pyfmi-scenario package --scenario scenario.txt --output scenario.fmu
+pyfmi-scenario ssv --scenario scenario.txt --output scenario.ssv
+pyfmi-scenario run --fmu scenario.fmu --output results.csv
 ```
 
 `package` also accepts `--scenario-text` for an inline scenario and `--guid` to
@@ -95,7 +95,7 @@ No FMI XML, `.fmu` packaging, or FMI runtime is hand-rolled here.
   grammar and rejected as unsupported.
 - Packaging needs `cmake` and `g++`; installing the Python package does not.
 - Identity is fixed: model name and identifier are `scenario`, the generation
-  tool is `pyfmu-scenario`, and the default GUID is
+  tool is `pyfmi-scenario`, and the default GUID is
   `9524b75e-dc71-47cd-a02f-e22b95a3f76d`. `build_reduction(..., guid=...)`
   overrides it.
 

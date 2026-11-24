@@ -6,8 +6,8 @@ import argparse
 import math
 from pathlib import Path
 
-from pyfmu_scenario import Interpolation, Sample, Scenario, Series
-from pyfmu_scenario.packaging import package_scenario
+from pyfmi_scenario import Interpolation, Sample, Scenario, Series
+from pyfmi_scenario.packaging import package_scenario
 
 CUSTOM_GUID = "0f8fad5b-d9cb-469f-a165-70867728950e"
 

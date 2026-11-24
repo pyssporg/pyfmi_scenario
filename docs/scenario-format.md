@@ -33,7 +33,7 @@ heat_load;ZOH;0.0,50.0;150.0,4000.0
 | `NN` | Nearest neighbour, with a tie choosing the left sample | yes |
 | `C` | Cubic | **no** — declared upstream, rejected with an unsupported-mode error |
 
-The Python reference evaluator in `src/pyfmu_scenario/series.py` is the oracle
+The Python reference evaluator in `src/pyfmi_scenario/series.py` is the oracle
 for the generated runtime. Its semantics, which mirror the upstream C++:
 
 - a time before the first sample evaluates to `0.0`, for every mode;

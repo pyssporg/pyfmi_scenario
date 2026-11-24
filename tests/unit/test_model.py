@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from pyfmu_scenario.grammar import parse_scenario, serialize_scenario
-from pyfmu_scenario.model import (
+from pyfmi_scenario.grammar import parse_scenario, serialize_scenario
+from pyfmi_scenario.model import (
     DEFAULT_EXPERIMENT,
     DEFAULT_GUID,
     MODEL_IDENTIFIER,

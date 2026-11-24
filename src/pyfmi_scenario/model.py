@@ -31,7 +31,7 @@ MODEL_NAME = "scenario"
 MODEL_IDENTIFIER = "scenario"
 PARAMETER_NAME = "scenario_input"
 DEFAULT_GUID = "9524b75e-dc71-47cd-a02f-e22b95a3f76d"
-GENERATION_TOOL = "pyfmu-scenario"
+GENERATION_TOOL = "pyfmi-scenario"
 AUTHOR = "pyssporg"
 VERSION = __version__
 DEFAULT_EXPERIMENT = Experiment(
@@ -110,7 +110,7 @@ def build_component(scenario: Scenario) -> Component:
     The parameter keeps no C++ start value: the canonical scenario text spans
     several lines, and the generated C literal escapes quotes but not
     newlines. The authoritative start value is the one written to
-    ``modelDescription.xml`` by :mod:`pyfmu_scenario.model_description`; the
+    ``modelDescription.xml`` by :mod:`pyfmi_scenario.model_description`; the
     FMI importer sets the parameter before initialization.
     """
     storage = tuple(

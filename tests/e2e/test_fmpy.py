@@ -7,10 +7,10 @@ from pathlib import Path
 
 import pytest
 
-from pyfmu_scenario.grammar import parse_scenario, serialize_scenario
-from pyfmu_scenario.model import PARAMETER_NAME
-from pyfmu_scenario.packaging import package_scenario
-from pyfmu_scenario.series import evaluate_scenario
+from pyfmi_scenario.grammar import parse_scenario, serialize_scenario
+from pyfmi_scenario.model import PARAMETER_NAME
+from pyfmi_scenario.packaging import package_scenario
+from pyfmi_scenario.series import evaluate_scenario
 
 fmpy = pytest.importorskip("fmpy")
 

@@ -8,9 +8,9 @@ from xml.etree import ElementTree as ET
 
 import pytest
 
-from pyfmu_scenario.grammar import parse_scenario
-from pyfmu_scenario.model import DEFAULT_GUID
-from pyfmu_scenario.packaging import package_scenario
+from pyfmi_scenario.grammar import parse_scenario
+from pyfmi_scenario.model import DEFAULT_GUID
+from pyfmi_scenario.packaging import package_scenario
 
 pytestmark = pytest.mark.integration
 

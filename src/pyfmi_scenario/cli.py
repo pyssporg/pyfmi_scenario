@@ -1,4 +1,4 @@
-"""Command line for pyfmu_scenario.
+"""Command line for pyfmi_scenario.
 
 The commands are deliberately thin: parsing, packaging, and SSP writing live
 in the library modules; this module only binds arguments to them.
@@ -132,7 +132,7 @@ def _run_fmu(fmu: Path, output: Path | None) -> int:
     except ImportError as exc:
         raise RuntimeError(
             "the 'run' command requires fmpy; install the dev extra with "
-            "`pip install 'pyfmu-scenario[dev]'`"
+            "`pip install 'pyfmi-scenario[dev]'`"
         ) from exc
 
     description = fmpy.read_model_description(str(fmu))
@@ -191,7 +191,7 @@ def _run(args: argparse.Namespace) -> int:
 def main(argv: list[str] | None = None) -> int:
     """Run the command line; return 0 on success and 1 on failure."""
     parser = argparse.ArgumentParser(
-        prog="pyfmu-scenario",
+        prog="pyfmi-scenario",
         description="Build scenario-series FMUs, parameter sets, and runs.",
     )
     commands = parser.add_subparsers(dest="command", required=True)
@@ -226,7 +226,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         return args.handler(args)
     except Exception as exc:  # noqa: BLE001 - CLI boundary
-        print(f"pyfmu-scenario: {exc}", file=sys.stderr)
+        print(f"pyfmi-scenario: {exc}", file=sys.stderr)
         return 1
 
 

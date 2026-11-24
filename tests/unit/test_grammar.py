@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from pyfmu_scenario.grammar import (
+from pyfmi_scenario.grammar import (
     BadNumberError,
     DuplicateSeriesNameError,
     EmptyScenarioError,

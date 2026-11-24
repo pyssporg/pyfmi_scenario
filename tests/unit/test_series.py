@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from pyfmu_scenario.grammar import parse_scenario
-from pyfmu_scenario.series import (
+from pyfmi_scenario.grammar import parse_scenario
+from pyfmi_scenario.series import (
     evaluate_scenario,
     evaluate_series,
     evaluate_series_at_times,
