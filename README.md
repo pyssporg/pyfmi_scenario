@@ -11,7 +11,7 @@ custom data loader.
 - It is an FMU producer, not a SysML parser.
 - It emits no SSD, SSV, SSM, or SSP. The `ssv` helper writes one parameter set
   for `scenario_input`; it does not reinterpret the series as SSP parameters.
-- It does not assemble systems. `pyssp_sysml2` consumes the packaged FMU.
+- It does not assemble systems. `pyssp_sysml` consumes the packaged FMU.
 - It does not target FMI 3.0 or Model Exchange.
 
 ## Install
