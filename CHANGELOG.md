@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-24
+
+### Changed (breaking)
+
+- Renamed the distribution, import package, and console script from
+  `pyfmu-scenario`/`pyfmu_scenario` to `pyfmi-scenario`/`pyfmi_scenario`.
+
 ### Added
 
 - A `tests` workflow that lints and runs the pytest suite on Python 3.11 and
@@ -23,6 +30,7 @@ and this project adheres to
   core repository artifacts, and the two CI workflows.
 - Moved the scenario producer from the prototype `scenario_fmu` package to
   `pyfmi_scenario`, with `scenario_input` as the only FMU parameter.
+- Pinned `pyfmi-interfaces` to its `v0.5.3` release wheel.
 
 ## [0.1.1] - 2026-11-23
 

@@ -21,11 +21,13 @@ SCENARIO = parse_scenario(
     (DATA / "scenario.txt").read_text(encoding="utf-8").strip()
 )
 
-# The reference FMU predates this producer's identity metadata. Structure and
-# every other attribute must match; these two values are the deliberate rename.
+# The reference FMU predates this producer's identity metadata and the 0.2.0
+# version bump. Structure and every other attribute must match; these values
+# are the deliberate differences.
 FIXTURE_DIFFERENCES = {
     "author": (AUTHOR, "scenario_fmu"),
     "generationTool": (GENERATION_TOOL, "scenario_fmu"),
+    "version": (VERSION, "0.1.0"),
 }
 
 
